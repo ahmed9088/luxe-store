@@ -17,6 +17,8 @@ const ALL_PRODUCTS = [
         image: '/images/linen-shirt.png',
         category: 'Clothing',
         featured: true,
+        details: ['100% French Flax', 'Breathable Weave', 'Relaxed Fit'],
+        priority: true
     },
     {
         id: '2',
@@ -27,6 +29,8 @@ const ALL_PRODUCTS = [
         image: '/images/leather-bag.png',
         category: 'Accessories',
         featured: true,
+        details: ['Veg-Tanned Leather', 'Internal Pockets', 'Hand-Stitched'],
+        priority: true
     },
     {
         id: '3',
@@ -37,6 +41,8 @@ const ALL_PRODUCTS = [
         image: '/images/silver-watch.png',
         category: 'Accessories',
         featured: true,
+        details: ['Japanese Quartz', '5ATM Water Resistance', 'Steel Mesh'],
+        priority: true
     },
     {
         id: '4',
@@ -47,6 +53,8 @@ const ALL_PRODUCTS = [
         image: '/images/ceramic-mug.png',
         category: 'Lifestyle',
         featured: true,
+        details: ['Hand-Thrown Ceramic', 'Dishwasher Safe', 'Ergonomic Grip'],
+        priority: true
     },
     {
         id: '5',
@@ -56,6 +64,7 @@ const ALL_PRODUCTS = [
         price: 145.00,
         image: '/images/linen-shirt.png',
         category: 'Clothing',
+        details: ['Breathable Linen', 'Tailored Cut', 'Natural Fibers']
     },
     {
         id: '6',
@@ -65,6 +74,7 @@ const ALL_PRODUCTS = [
         price: 65.00,
         image: '/images/leather-bag.png',
         category: 'Accessories',
+        details: ['Slim Profile', 'RFID Protection', 'Premium Cowhide']
     },
 ];
 
@@ -225,6 +235,8 @@ export default function ProductListing() {
                                                     image={product.image}
                                                     category={product.category}
                                                     featured={product.featured}
+                                                    details={product.details}
+                                                    priority={product.priority}
                                                 />
                                             </motion.div>
                                         ))}

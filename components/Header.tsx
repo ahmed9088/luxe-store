@@ -2,14 +2,21 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { ShoppingCart, Search, Menu, X, User } from 'lucide-react';
+import { ShoppingCart, Search, Menu, X, User, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import CartDrawer from './CartDrawer';
+import WishlistDrawer from './WishlistDrawer';
+import Magnetic from './Magnetic';
+import { useHapticFeedback } from '@/lib/haptics';
 
 export default function Header() {
+    const { playClick, playHover } = useHapticFeedback();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
+    const [wishlistOpen, setWishlistOpen] = useState(false);
     const { totalItems } = useCart();
+    const { wishlist } = useWishlist();
 
     return (
         <>
@@ -17,11 +24,16 @@ export default function Header() {
                 <div className="container-custom">
                     <div className="flex items-center justify-between h-16 md:h-20">
                         {/* Logo */}
-                        <Link href="/" className="flex items-center space-x-2 group">
-                            <h1 className="text-2xl md:text-3xl font-display font-bold bg-gradient-primary bg-clip-text text-transparent">
-                                Luxe
-                            </h1>
-                        </Link>
+                        <Magnetic strength={0.2}>
+                            <Link href="/" className="flex items-center space-x-2 group">
+                                <h1 className="text-2xl md:text-3xl font-display font-bold text-gradient-primary">
+                                    Luxe
+                                </h1>
+                            </Link>
+                        </Magnetic>
+
+                        {/* Desktop Navigation */}
+                        {/* ... */}
 
                         {/* Desktop Navigation */}
                         <nav className="hidden md:flex items-center space-x-8">
@@ -40,29 +52,52 @@ export default function Header() {
                         </nav>
 
                         {/* Actions */}
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 md:space-x-4">
                             {/* Search */}
-                            <button className="hidden md:flex btn-ghost btn-sm">
-                                <Search className="w-5 h-5" />
-                            </button>
+                            <Magnetic strength={0.3}>
+                                <button className="hidden md:flex btn-ghost btn-sm">
+                                    <Search className="w-5 h-5" />
+                                </button>
+                            </Magnetic>
+
+                            {/* Wishlist */}
+                            <Magnetic strength={0.3}>
+                                <button
+                                    onClick={() => { playClick(); setWishlistOpen(true); }}
+                                    className="btn-ghost btn-sm relative"
+                                    onMouseEnter={playHover}
+                                >
+                                    <Heart className={`w-5 h-5 ${wishlist.length > 0 ? 'text-primary fill-primary' : ''}`} />
+                                    {wishlist.length > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-primary text-stone-950 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                            {wishlist.length}
+                                        </span>
+                                    )}
+                                </button>
+                            </Magnetic>
 
                             {/* Account */}
-                            <Link href="/account" className="hidden md:flex btn-ghost btn-sm">
-                                <User className="w-5 h-5" />
-                            </Link>
+                            <Magnetic strength={0.3}>
+                                <Link href="/account" className="hidden md:flex btn-ghost btn-sm">
+                                    <User className="w-5 h-5" />
+                                </Link>
+                            </Magnetic>
 
                             {/* Cart */}
-                            <button
-                                onClick={() => setCartOpen(true)}
-                                className="btn-ghost btn-sm relative"
-                            >
-                                <ShoppingCart className="w-5 h-5" />
-                                {totalItems > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-primary text-stone-950 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                                        {totalItems}
-                                    </span>
-                                )}
-                            </button>
+                            <Magnetic strength={0.3}>
+                                <button
+                                    onClick={() => { playClick(); setCartOpen(true); }}
+                                    className="btn-ghost btn-sm relative"
+                                    onMouseEnter={playHover}
+                                >
+                                    <ShoppingCart className="w-5 h-5" />
+                                    {totalItems > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-primary text-stone-950 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                            {totalItems}
+                                        </span>
+                                    )}
+                                </button>
+                            </Magnetic>
 
                             {/* Mobile Menu Button */}
                             <button
@@ -76,7 +111,7 @@ export default function Header() {
 
                     {/* Mobile Menu */}
                     {mobileMenuOpen && (
-                        <div className="md:hidden py-4 space-y-4 animate-fade-in">
+                        <div className="md:hidden py-4 space-y-4 animate-fade-in border-t border-white/5">
                             <Link
                                 href="/products"
                                 className="block py-2 text-stone-300 hover:text-primary transition-colors"
@@ -118,6 +153,7 @@ export default function Header() {
             </header>
 
             <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+            <WishlistDrawer isOpen={wishlistOpen} onClose={() => setWishlistOpen(false)} />
         </>
     );
 }

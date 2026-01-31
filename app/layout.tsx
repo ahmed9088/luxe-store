@@ -7,6 +7,11 @@ export const metadata: Metadata = {
 };
 
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
+import CustomCursor from "@/components/CustomCursor";
+import PageTransition from "@/components/PageTransition";
+import SmoothScroll from "@/components/SmoothScroll";
+import AuraBackground from "@/components/AuraBackground";
 
 import { Toaster } from 'sonner';
 
@@ -17,11 +22,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <CartProvider>
-          {children}
-          <Toaster position="bottom-right" expand={false} richColors />
-        </CartProvider>
+      <body className="cursor-none">
+        <SmoothScroll>
+          <AuraBackground />
+          <CartProvider>
+            <WishlistProvider>
+              <CustomCursor />
+              <PageTransition>
+                {children}
+              </PageTransition>
+              <Toaster position="bottom-right" expand={false} richColors />
+            </WishlistProvider>
+          </CartProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

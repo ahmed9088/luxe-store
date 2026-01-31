@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -75,16 +75,17 @@ const FEATURED_PRODUCTS = [
     },
 ];
 
-export default function ProductDetail({ params }: { params: { slug: string } }) {
+export default function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = use(params);
     const { addItem } = useCart();
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
 
-    const product = PRODUCTS[params.slug as keyof typeof PRODUCTS] || PRODUCTS['essential-linen-shirt'];
+    const product = PRODUCTS[slug as keyof typeof PRODUCTS] || PRODUCTS['essential-linen-shirt'];
 
-    const relatedProducts = FEATURED_PRODUCTS.filter(p => p.slug !== params.slug).slice(0, 4);
+    const relatedProducts = FEATURED_PRODUCTS.filter(p => p.slug !== slug).slice(0, 4);
 
     const handleAddToCart = () => {
         addItem({
