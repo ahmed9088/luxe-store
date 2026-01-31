@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -166,8 +168,8 @@ export default function ProductListing() {
                                             <button
                                                 onClick={() => setActiveCategory(cat)}
                                                 className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-all ${activeCategory === cat
-                                                        ? 'bg-primary/10 text-primary font-semibold border-l-2 border-primary'
-                                                        : 'text-stone-400 hover:text-white hover:bg-stone-900/50'
+                                                    ? 'bg-primary/10 text-primary font-semibold border-l-2 border-primary'
+                                                    : 'text-stone-400 hover:text-white hover:bg-stone-900/50'
                                                     }`}
                                             >
                                                 {cat}

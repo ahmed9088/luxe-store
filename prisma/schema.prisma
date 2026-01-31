@@ -1,13 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
 }
 
 model User {
@@ -17,9 +13,8 @@ model User {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  cart   Cart?
-  orders Order[]
+  cart      Cart?
+  orders    Order[]
 }
 
 model Category {
@@ -29,8 +24,7 @@ model Category {
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  products Product[]
+  products    Product[]
 }
 
 model Product {
@@ -40,18 +34,17 @@ model Product {
   description String
   price       Float
   salePrice   Float?
-  images      String   // JSON array of image URLs
+  images      String
   stock       Int      @default(0)
   featured    Boolean  @default(false)
   categoryId  String
-  sizes       String?  // JSON array of sizes
-  colors      String?  // JSON array of colors
+  sizes       String?
+  colors      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  category   Category    @relation(fields: [categoryId], references: [id])
-  cartItems  CartItem[]
-  orderItems OrderItem[]
+  category    Category    @relation(fields: [categoryId], references: [id])
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
 }
 
 model Cart {
@@ -59,9 +52,8 @@ model Cart {
   userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items CartItem[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
 }
 
 model CartItem {
@@ -73,10 +65,8 @@ model CartItem {
   color     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
-
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
   @@unique([cartId, productId, size, color])
 }
 
@@ -84,14 +74,13 @@ model Order {
   id              String   @id @default(uuid())
   userId          String
   total           Float
-  status          String   @default("pending") // pending, processing, shipped, delivered, cancelled
-  shippingAddress String   // JSON object
-  paymentId       String?  // Stripe payment ID
+  status          String   @default("pending")
+  shippingAddress String
+  paymentId       String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
-  user  User        @relation(fields: [userId], references: [id])
-  items OrderItem[]
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
 }
 
 model OrderItem {
@@ -99,11 +88,10 @@ model OrderItem {
   orderId   String
   productId String
   quantity  Int
-  price     Float    // Price at time of order
+  price     Float
   size      String?
   color     String?
   createdAt DateTime @default(now())
-
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
 }
