@@ -1,5 +1,18 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
+
+const sans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const serif = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+});
 
 export const metadata: Metadata = {
   title: "Luxe - Premium Lifestyle Store",
@@ -8,11 +21,7 @@ export const metadata: Metadata = {
 
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
-import CustomCursor from "@/components/CustomCursor";
-import PageTransition from "@/components/PageTransition";
-import SmoothScroll from "@/components/SmoothScroll";
 import AuraBackground from "@/components/AuraBackground";
-
 import { Toaster } from 'sonner';
 
 export default function RootLayout({
@@ -21,20 +30,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="cursor-none">
-        <SmoothScroll>
-          <AuraBackground />
-          <CartProvider>
-            <WishlistProvider>
-              <CustomCursor />
-              <PageTransition>
-                {children}
-              </PageTransition>
-              <Toaster position="bottom-right" expand={false} richColors />
-            </WishlistProvider>
-          </CartProvider>
-        </SmoothScroll>
+    <html lang="en" className={`scroll-smooth ${sans.variable} ${serif.variable}`}>
+      <body className="antialiased font-sans bg-background text-foreground">
+        <AuraBackground />
+        <CartProvider>
+          <WishlistProvider>
+            {children}
+            <Toaster position="bottom-right" expand={false} richColors />
+          </WishlistProvider>
+        </CartProvider>
       </body>
     </html>
   );

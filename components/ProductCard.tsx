@@ -1,15 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import { ShoppingCart, Eye, Star, Heart } from 'lucide-react';
+import { ShoppingBag, Eye, Star, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { useState } from 'react';
 import QuickViewModal from './QuickViewModal';
 import Link from 'next/link';
-import { useHapticFeedback } from '@/lib/haptics';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 interface ProductCardProps {
     id: string;
@@ -26,37 +28,9 @@ interface ProductCardProps {
 
 export default function ProductCard({ id, name, slug, price, image, category, featured, description, details, priority = false }: ProductCardProps) {
     const router = useRouter();
-    const { playClick, playHover } = useHapticFeedback();
     const { addItem } = useCart();
     const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
     const [quickViewOpen, setQuickViewOpen] = useState(false);
-
-    // 3D Tilt Effect
-    const x = useMotionValue(0);
-    const y = useMotionValue(0);
-
-    const mouseXSpring = useSpring(x, { damping: 20, stiffness: 150 });
-    const mouseYSpring = useSpring(y, { damping: 20, stiffness: 150 });
-
-    const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
-    const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const xPct = mouseX / width - 0.5;
-        const yPct = mouseY / height - 0.5;
-        x.set(xPct);
-        y.set(yPct);
-    };
-
-    const handleMouseLeave = () => {
-        x.set(0);
-        y.set(0);
-    };
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -82,121 +56,100 @@ export default function ProductCard({ id, name, slug, price, image, category, fe
     };
 
     return (
-        <>
-            <motion.div
-                style={{
-                    rotateX,
-                    rotateY,
-                    transformStyle: "preserve-3d",
-                }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                onMouseEnter={() => {
-                    playHover();
-                    router.prefetch(`/products/${slug}`);
-                }}
-                className="group relative h-full perspective-1000"
-            >
-                <div className="card-hover overflow-hidden h-full flex flex-col transition-all duration-500 group-hover:shadow-[0_20px_50px_rgba(194,120,97,0.15)] group-hover:border-primary/20 bg-stone-900/40 backdrop-blur-sm border border-white/5 rounded-2xl">
-                    {/* Image Container */}
-                    <div className="img-container aspect-[4/5] img-hover-zoom relative flex-shrink-0">
-                        <Image
-                            src={image}
-                            alt={name}
-                            fill
-                            className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                            priority={priority}
-                        />
+        <Card
+            className="group relative overflow-visible bg-transparent border-none shadow-none card-trendy"
+            onMouseEnter={() => router.prefetch(`/products/${slug}`)}
+        >
+            <div className="relative aspect-[3/4] overflow-hidden rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-700 group-hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] group-hover:rounded-[1.5rem]">
+                <Image
+                    src={image}
+                    alt={name}
+                    fill
+                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+                    priority={priority}
+                />
 
-                        {/* Overlay Actions */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-500 backdrop-blur-[2px] flex items-center justify-center gap-4 z-20">
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                className="flex gap-3"
-                            >
-                                <button
-                                    onClick={() => { playClick(); setQuickViewOpen(true); }}
-                                    className="w-12 h-12 rounded-full glass border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-stone-950 transition-colors"
-                                    title="Quick View"
-                                    onMouseEnter={playHover}
-                                >
-                                    <Eye className="w-5 h-5" />
-                                </button>
-                                <button
-                                    onClick={handleAddToCart}
-                                    className="w-12 h-12 rounded-full glass border-white/20 flex items-center justify-center text-white hover:bg-primary hover:text-stone-950 transition-colors"
-                                    title="Add to Bag"
-                                    onMouseEnter={playHover}
-                                    onMouseDown={playClick}
-                                >
-                                    <ShoppingCart className="w-5 h-5" />
-                                </button>
-                            </motion.div>
-                        </div>
+                {/* Dark Overlay on Hover */}
+                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                        {/* Wishlist Button */}
-                        <button
-                            onClick={toggleWishlist}
-                            className={`absolute top-4 right-4 z-30 p-2 rounded-full glass border-white/10 transition-all duration-300 ${isInWishlist(id) ? 'text-primary fill-primary scale-110' : 'text-white hover:scale-110'
-                                }`}
-                            onMouseEnter={playHover}
-                            onMouseDown={playClick}
-                        >
-                            <Heart className={`w-4 h-4 ${isInWishlist(id) ? 'fill-primary' : ''}`} />
-                        </button>
-
-                        {/* Badges */}
-                        {featured && (
-                            <div className="absolute top-4 left-4 z-10">
-                                <span className="badge-featured flex items-center gap-1 shadow-lg bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                                    <Star className="w-3 h-3 fill-primary" />
-                                    Featured
-                                </span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-grow p-5 space-y-3 flex flex-col justify-between" style={{ transform: "translateZ(20px)" }}>
-                        <div>
-                            <p className="text-[10px] text-stone-500 uppercase tracking-[0.2em] font-semibold mb-1">{category}</p>
-                            <Link href={`/products/${slug}`}>
-                                <h3 className="text-lg font-display font-medium group-hover:text-primary transition-colors line-clamp-2 leading-tight">{name}</h3>
-                            </Link>
-
-                            {/* Data-Rich Product Details */}
-                            {details && details.length > 0 && (
-                                <div className="flex flex-wrap gap-x-2 gap-y-1 mt-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                                    {details.slice(0, 3).map((detail, idx) => (
-                                        <span key={idx} className="text-[9px] uppercase tracking-widest flex items-center gap-1 whitespace-nowrap bg-white/5 px-1.5 py-0.5 rounded-sm">
-                                            {detail}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        <div className="pt-4 flex justify-between items-center border-t border-white/5">
-                            <div className="flex flex-col">
-                                <span className="text-[10px] text-stone-500 uppercase tracking-widest font-medium">Price</span>
-                                <p className="font-display font-semibold text-xl text-primary">${price.toFixed(2)}</p>
-                            </div>
-                            <button
-                                onClick={handleAddToCart}
-                                className="btn-primary btn-sm rounded-xl px-4 py-2"
-                            >
-                                Add +
-                            </button>
-                        </div>
-                    </div>
+                {/* Badges */}
+                <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">
+                    {featured && (
+                        <Badge variant="outline" className="bg-black/80 backdrop-blur-xl text-primary border-primary/30 py-1.5 px-4 rounded-full text-[8px] tracking-[0.4em] uppercase font-black">
+                            Signature
+                        </Badge>
+                    )}
                 </div>
-            </motion.div>
 
-            <QuickViewModal
-                isOpen={quickViewOpen}
-                onClose={() => setQuickViewOpen(false)}
-                product={{ id, name, slug, price, image, category, featured, description }}
-            />
-        </>
+                {/* Wishlist */}
+                <button
+                    onClick={toggleWishlist}
+                    className="absolute top-6 right-6 z-20 h-12 w-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-2xl border border-white/20 text-white transition-all duration-500 hover:bg-primary hover:text-black hover:scale-110 active:scale-95 group/heart"
+                >
+                    <Heart className={`w-4 h-4 transition-all duration-500 ${isInWishlist(id) ? 'fill-white' : 'text-white'}`} />
+                </button>
+
+                {/* Quick Actions Overlay */}
+                <div className="absolute inset-x-6 bottom-6 z-20 translate-y-8 opacity-0 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-y-0 group-hover:opacity-100 hidden lg:block">
+                    <Dialog open={quickViewOpen} onOpenChange={setQuickViewOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="w-full rounded-full bg-white/95 backdrop-blur-xl border-none shadow-2xl h-14 font-black uppercase tracking-[0.3em] text-[9px] hover:bg-primary hover:text-white transition-all duration-500">
+                                <Eye className="w-4 h-4 mr-3" />
+                                Inspect Piece
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-5xl p-0 overflow-hidden border-none sm:rounded-[4rem] glass-card">
+                            <QuickViewModal
+                                product={{ id, name, slug, price, image, category, featured, description, details }}
+                                onClose={() => setQuickViewOpen(false)}
+                            />
+                        </DialogContent>
+                    </Dialog>
+                </div>
+            </div>
+
+            <CardContent className="pt-8 px-2">
+                <div className="space-y-4">
+                    <div className="flex justify-between items-start gap-4">
+                        <div className="space-y-2">
+                            <p className="text-[9px] uppercase font-black tracking-[0.4em] text-primary/60">
+                                {category}
+                            </p>
+                            <Link href={`/products/${slug}`} className="block group/title">
+                                <h3 className="text-xl md:text-2xl font-serif font-black leading-tight text-foreground transition-all duration-500 group-hover/title:text-primary">
+                                    {name}
+                                </h3>
+                                <div className="h-px w-0 bg-primary group-hover/title:w-full transition-all duration-700" />
+                            </Link>
+                        </div>
+                        <p className="font-serif font-black text-2xl text-foreground/90 tabular-nums">
+                            <span className="text-sm font-light text-muted-foreground mr-1">$</span>
+                            {price.toFixed(0)}
+                        </p>
+                    </div>
+
+                    <div className="pt-2 overflow-hidden">
+                        <div className="transform translate-y-full opacity-0 transition-all duration-700 group-hover:translate-y-0 group-hover:opacity-100">
+                            <Button
+                                onClick={handleAddToCart}
+                                variant="gold"
+                                className="w-full h-14"
+                            >
+                                Acquire Piece
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Mobile Button - Always visible slightly */}
+                    <Button
+                        onClick={handleAddToCart}
+                        variant="gold"
+                        className="w-full lg:hidden h-14"
+                    >
+                        Acquire Piece
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

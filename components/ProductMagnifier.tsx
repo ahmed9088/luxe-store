@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 interface ProductMagnifierProps {
@@ -30,12 +29,12 @@ export default function ProductMagnifier({ src, alt }: ProductMagnifierProps) {
         setXY([x, y]);
     };
 
-    const magnifierSize = 150;
-    const zoomLevel = 2.5;
+    const magnifierSize = 160;
+    const zoomLevel = 2.2;
 
     return (
         <div
-            className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl cursor-none"
+            className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl"
             onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setShowMagnifier(false)}
@@ -49,31 +48,26 @@ export default function ProductMagnifier({ src, alt }: ProductMagnifierProps) {
                 priority
             />
 
-            <AnimatePresence>
-                {showMagnifier && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        style={{
-                            position: 'absolute',
-                            pointerEvents: 'none',
-                            height: `${magnifierSize}px`,
-                            width: `${magnifierSize}px`,
-                            top: `${y - magnifierSize / 2}px`,
-                            left: `${x - magnifierSize / 2}px`,
-                            backgroundImage: `url('${src}')`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundSize: `${imgWidth * zoomLevel}px ${imgHeight * zoomLevel}px`,
-                            backgroundPosition: `${-x * zoomLevel + magnifierSize / 2}px ${-y * zoomLevel + magnifierSize / 2}px`,
-                        }}
-                        className="rounded-full border-2 border-white/20 shadow-2xl z-50 backdrop-blur-sm overflow-hidden"
-                    >
-                        {/* Lens reflection/shimmer */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {showMagnifier && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        pointerEvents: 'none',
+                        height: `${magnifierSize}px`,
+                        width: `${magnifierSize}px`,
+                        top: `${y - magnifierSize / 2}px`,
+                        left: `${x - magnifierSize / 2}px`,
+                        backgroundImage: `url('${src}')`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: `${imgWidth * zoomLevel}px ${imgHeight * zoomLevel}px`,
+                        backgroundPosition: `${-x * zoomLevel + magnifierSize / 2}px ${-y * zoomLevel + magnifierSize / 2}px`,
+                    }}
+                    className="rounded-full border border-stone-100 shadow-xl z-50 overflow-hidden bg-white"
+                >
+                    {/* Lens reflection */}
+                    <div className="absolute inset-0 bg-white/5 pointer-events-none" />
+                </div>
+            )}
         </div>
     );
 }

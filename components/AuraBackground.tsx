@@ -1,37 +1,20 @@
 'use client';
 
 import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function AuraBackground() {
-    const { scrollYProgress } = useScroll();
-
-    // Transform scroll progress to various movements
-    const rotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
-    const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.2, 1]);
-    const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.3, 0.5, 0.5, 0.3]);
-
     return (
         <div className="fixed inset-0 -z-20 overflow-hidden pointer-events-none">
-            {/* Base gradient */}
-            <div className="absolute inset-0 bg-stone-950" />
+            {/* Base background - Deepest Midnight */}
+            <div className="absolute inset-0 bg-black" />
 
-            {/* Shifting Blobs */}
-            <motion.div
-                style={{ rotate, scale, opacity }}
-                className="absolute -top-[20%] -left-[10%] w-[80%] aspect-square rounded-full bg-primary/10 blur-[80px]"
-            />
-            <motion.div
-                style={{
-                    rotate: useTransform(scrollYProgress, [0, 1], [180, -180]),
-                    scale: useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 1, 1.2]),
-                    opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.15, 0.3, 0.15])
-                }}
-                className="absolute -bottom-[20%] -right-[10%] w-[70%] aspect-square rounded-full bg-stone-100/5 blur-[60px]"
-            />
+            {/* Cinematic Ambient Glows */}
+            <div className="absolute -top-[20%] -left-[10%] w-[80%] aspect-square rounded-full bg-primary/10 blur-[180px] opacity-40 animate-pulse-slow" />
+            <div className="absolute -bottom-[20%] -right-[10%] w-[60%] aspect-square rounded-full bg-primary/5 blur-[150px] opacity-30" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_0%,transparent_70%)]" />
 
-            {/* Grain Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+            {/* Subtler subtle background texture */}
+            <div className="absolute inset-0 opacity-[0.03] mix-blend-screen pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         </div>
     );
 }

@@ -1,75 +1,112 @@
 'use client';
 
 import Link from 'next/link';
-import { Instagram, Facebook, Twitter } from 'lucide-react';
+import { Instagram, Facebook, Twitter, Mail } from 'lucide-react';
 
 export default function Footer() {
     return (
-        <footer className="border-t border-stone-800 mt-20">
-            <div className="container-custom py-12">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <footer className="bg-black text-white border-t border-white/5 pt-24 pb-12 overflow-hidden relative">
+            <div className="absolute top-0 left-1/4 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+
+            <div className="container-custom">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 mb-24">
                     {/* Brand */}
-                    <div className="space-y-4">
-                        <h3 className="text-2xl font-display font-bold text-gradient-primary">
-                            Luxe
-                        </h3>
-                        <p className="text-stone-400 text-sm">
-                            Curated premium lifestyle and fashion for the modern individual.
+                    <div className="lg:col-span-4 space-y-12">
+                        <Link href="/" className="inline-block group">
+                            <span className="text-5xl font-serif font-black tracking-tighter text-white transition-all duration-700 group-hover:tracking-widest">
+                                LUXE
+                            </span>
+                        </Link>
+                        <p className="text-white/40 text-base max-w-sm leading-[1.8] font-medium italic">
+                            The definitive destination for curated luxury. Bridging the abyss between timeless craftsmanship and modern existential aesthetics.
                         </p>
-                        <div className="flex space-x-4">
-                            <a href="#" className="text-stone-400 hover:text-primary transition-colors">
-                                <Instagram className="w-5 h-5" />
-                            </a>
-                            <a href="#" className="text-stone-400 hover:text-primary transition-colors">
-                                <Facebook className="w-5 h-5" />
-                            </a>
-                            <a href="#" className="text-stone-400 hover:text-primary transition-colors">
-                                <Twitter className="w-5 h-5" />
-                            </a>
+                        <div className="flex space-x-6">
+                            <SocialLink href="#" icon={<Instagram className="w-5 h-5" />} />
+                            <SocialLink href="#" icon={<Twitter className="w-5 h-5" />} />
+                            <SocialLink href="#" icon={<Mail className="w-5 h-5" />} />
                         </div>
                     </div>
 
-                    {/* Shop */}
-                    <div>
-                        <h4 className="font-semibold mb-4">Shop</h4>
-                        <ul className="space-y-2">
-                            <li><Link href="/products" className="text-stone-400 hover:text-primary transition-colors text-sm">All Products</Link></li>
-                            <li><Link href="/products?category=clothing" className="text-stone-400 hover:text-primary transition-colors text-sm">Clothing</Link></li>
-                            <li><Link href="/products?category=accessories" className="text-stone-400 hover:text-primary transition-colors text-sm">Accessories</Link></li>
-                            <li><Link href="/products?featured=true" className="text-stone-400 hover:text-primary transition-colors text-sm">Featured</Link></li>
-                        </ul>
-                    </div>
+                    {/* Navigation Groups */}
+                    <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-12">
+                        <div className="space-y-8">
+                            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Curation</h4>
+                            <ul className="space-y-4">
+                                <FooterLink href="/products">All Pieces</FooterLink>
+                                <FooterLink href="/products?category=clothing">Apparel</FooterLink>
+                                <FooterLink href="/products?category=accessories">Objects</FooterLink>
+                                <FooterLink href="/products?featured=true">Signature Selection</FooterLink>
+                            </ul>
+                        </div>
 
-                    {/* Support */}
-                    <div>
-                        <h4 className="font-semibold mb-4">Support</h4>
-                        <ul className="space-y-2">
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">Contact Us</Link></li>
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">Shipping & Returns</Link></li>
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">Size Guide</Link></li>
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">FAQ</Link></li>
-                        </ul>
-                    </div>
+                        <div className="space-y-8">
+                            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Concierge</h4>
+                            <ul className="space-y-4">
+                                <FooterLink href="#">Client Service</FooterLink>
+                                <FooterLink href="#">Global Shipping</FooterLink>
+                                <FooterLink href="#">Vault Insurance</FooterLink>
+                                <FooterLink href="#">Bespoke Sizing</FooterLink>
+                            </ul>
+                        </div>
 
-                    {/* Company */}
-                    <div>
-                        <h4 className="font-semibold mb-4">Company</h4>
-                        <ul className="space-y-2">
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">About Us</Link></li>
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">Privacy Policy</Link></li>
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">Terms of Service</Link></li>
-                            <li><Link href="#" className="text-stone-400 hover:text-primary transition-colors text-sm">Careers</Link></li>
-                        </ul>
+                        <div className="space-y-8">
+                            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Maison</h4>
+                            <ul className="space-y-4">
+                                <FooterLink href="#">Our Narrative</FooterLink>
+                                <FooterLink href="#">Ethical Charter</FooterLink>
+                                <FooterLink href="#">Private Viewings</FooterLink>
+                                <FooterLink href="#">Career Legacy</FooterLink>
+                            </ul>
+                        </div>
+
+                        <div className="space-y-8">
+                            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Legal</h4>
+                            <ul className="space-y-4">
+                                <FooterLink href="#">Privacy Vault</FooterLink>
+                                <FooterLink href="#">Terms of Intent</FooterLink>
+                                <FooterLink href="#">Cookie Protocol</FooterLink>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
-                <div className="divider"></div>
-
-                <div className="flex flex-col md:flex-row justify-between items-center text-sm text-stone-400">
-                    <p>&copy; 2026 Luxe. All rights reserved.</p>
-                    <p className="mt-2 md:mt-0">Crafted with care for premium experiences</p>
+                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
+                    <p className="text-[9px] uppercase font-black tracking-[0.4em] text-white/20">
+                        &copy; 2026 LUXE STUDIO INC. — ALL RIGHTS RESERVED.
+                    </p>
+                    <div className="flex gap-12">
+                        {['Modernity', 'Tradition', 'Intention'].map((v) => (
+                            <p key={v} className="text-[9px] uppercase font-black tracking-[0.6em] text-white/20 hover:text-primary transition-all duration-700 cursor-default">
+                                {v}
+                            </p>
+                        ))}
+                    </div>
                 </div>
             </div>
         </footer>
+    );
+}
+
+function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
+    return (
+        <a
+            href={href}
+            className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:bg-primary hover:text-black hover:border-primary transition-all duration-500"
+        >
+            {icon}
+        </a>
+    );
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+    return (
+        <li>
+            <Link
+                href={href}
+                className="text-white/40 hover:text-white transition-all duration-500 text-sm font-medium italic"
+            >
+                {children}
+            </Link>
+        </li>
     );
 }

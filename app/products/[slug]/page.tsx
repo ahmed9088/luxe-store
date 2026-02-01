@@ -6,10 +6,12 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
-import { ShoppingCart, Heart, Share2, ShieldCheck, Truck, Star } from 'lucide-react';
+import { ShoppingBag, Heart, Share2, ShieldCheck, Truck, Star, ChevronLeft, ArrowRight, Minus, Plus } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useWishlist } from '@/context/WishlistContext';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const PRODUCTS = {
     'essential-linen-shirt': {
@@ -18,10 +20,10 @@ const PRODUCTS = {
         price: 120.00,
         images: ['/images/linen-shirt.png'],
         category: 'Clothing',
-        description: 'A breathable, high-quality white linen shirt perfect for any season. Features a relaxed fit, sustainable natural buttons, and premium stitching details.',
-        features: ['100% Organic Linen', 'Breathable fabric', 'Sustainable production', 'Relaxed fit'],
+        description: 'A masterpiece of minimalism, our linen shirt is crafted from the finest European flax for ultimate breathability and comfort. Features a relaxed silhouette, sustainable natural buttons, and meticulous tailoring.',
+        features: ['100% Organic French Flax', 'Superior Breathability', 'Ethical European Craftsmanship', 'Architectural Boxy Fit'],
         sizes: ['S', 'M', 'L', 'XL'],
-        colors: ['White', 'Off-white'],
+        colors: ['Antique White', 'Ethereal Gray'],
     },
     'tan-leather-tote': {
         id: '2',
@@ -29,10 +31,10 @@ const PRODUCTS = {
         price: 280.00,
         images: ['/images/leather-bag.png'],
         category: 'Accessories',
-        description: 'A minimalist tan leather tote handcrafted from premium full-grain leather. Durable, spacious, and designed to age beautifully with time.',
-        features: ['Full-grain leather', 'Handcrafted', 'Spruce interior', 'Reinforced straps'],
-        sizes: ['One Size'],
-        colors: ['Tan', 'Cognac'],
+        description: 'Handcrafted from full-grain vegetable-tanned leather, this tote is designed to age beautifully and last a lifetime. Features a spacious interior and reinforced construction for daily use.',
+        features: ['Full-Grain Veg-Tanned Leather', 'Artisanal Hand-Stitching', 'Signature Suede Interior', 'Ergonomic Shoulder Straps'],
+        sizes: ['Universal Size'],
+        colors: ['Classic Tan', 'Deep Cognac'],
     },
 };
 
@@ -78,13 +80,13 @@ const FEATURED_PRODUCTS = [
 export default function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
     const { addItem } = useCart();
+    const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
 
     const product = PRODUCTS[slug as keyof typeof PRODUCTS] || PRODUCTS['essential-linen-shirt'];
-
     const relatedProducts = FEATURED_PRODUCTS.filter(p => p.slug !== slug).slice(0, 4);
 
     const handleAddToCart = () => {
@@ -98,222 +100,230 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
             size: selectedSize,
             color: selectedColor,
         });
+        toast.success('Successfully added to bag', {
+            description: `${product.name} is now awaiting checkout.`
+        });
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
+    const isProductInWishlist = isInWishlist(product.id);
+
+    const toggleWishlist = () => {
+        if (isProductInWishlist) {
+            removeFromWishlist(product.id);
+            toast.info('Removed from wishlist');
+        } else {
+            addToWishlist({ ...product, slug, image: product.images[0] } as any);
+            toast.success('Added to wishlist');
         }
     };
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        show: { opacity: 1, y: 0 }
-    };
-
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-background">
             <Header />
 
-            <main className="flex-grow pt-8 pb-24">
+            <main className="flex-grow pt-40 pb-40">
                 <div className="container-custom">
-                    {/* Breadcrumbs */}
-                    <motion.nav
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex text-sm text-stone-500 mb-8 items-center gap-2"
-                    >
-                        <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                        <span>/</span>
-                        <Link href="/products" className="hover:text-primary transition-colors">Products</Link>
-                        <span>/</span>
-                        <span className="text-stone-300 font-medium">{product.name}</span>
-                    </motion.nav>
+                    {/* Navigation Bar */}
+                    <nav className="flex items-center justify-between mb-24">
+                        <Link href="/products" className="group flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.5em] text-muted-foreground hover:text-foreground transition-all duration-500">
+                            <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-3 text-primary" />
+                            Return to Repository
+                        </Link>
+                        <div className="flex gap-6">
+                            <button className="w-14 h-14 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-500 border border-border">
+                                <Share2 className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </nav>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-32">
-                        {/* Image Gallery */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.8 }}
-                            className="space-y-6"
-                        >
-                            <div className="aspect-[4/5] relative rounded-3xl overflow-hidden bg-stone-900 border border-white/5 shadow-2xl">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={activeImage}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.5 }}
-                                        className="h-full w-full"
-                                    >
-                                        <Image
-                                            src={product.images[activeImage]}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover"
-                                            priority
-                                        />
-                                    </motion.div>
-                                </AnimatePresence>
-
-                                <div className="absolute top-6 left-6">
-                                    <span className="badge-featured bg-stone-950/80 backdrop-blur-md">Exclusive</span>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 xl:gap-32">
+                        {/* Interactive Gallery */}
+                        <div className="lg:col-span-7 space-y-12">
+                            <div className="aspect-[3/4] relative rounded-[4rem] overflow-hidden bg-white shadow-[0_40px_100px_rgba(0,0,0,0.1)] group">
+                                <Image
+                                    src={product.images[activeImage]}
+                                    alt={product.name}
+                                    fill
+                                    className="object-cover transition-transform duration-1000 group-hover:scale-110 ease-out"
+                                    priority
+                                />
+                                <div className="absolute top-12 left-12">
+                                    <Badge variant="outline" className="bg-black/80 backdrop-blur-2xl text-primary py-2 px-6 rounded-full border-primary/30 shadow-2xl text-[10px] tracking-[0.4em] font-black uppercase italic">
+                                        Certified Archive
+                                    </Badge>
                                 </div>
                             </div>
 
                             {product.images.length > 1 && (
-                                <div className="grid grid-cols-4 gap-4">
+                                <div className="grid grid-cols-4 gap-8">
                                     {product.images.map((img, i) => (
                                         <button
                                             key={i}
                                             onClick={() => setActiveImage(i)}
-                                            className={`aspect-square relative rounded-2xl overflow-hidden bg-stone-900 border-2 transition-all ${activeImage === i ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                                            className={`aspect-[3/4] relative rounded-[2rem] overflow-hidden transition-all duration-700 hover:scale-105 ${activeImage === i
+                                                ? 'ring-4 ring-primary ring-offset-8 ring-offset-background'
+                                                : 'opacity-40 hover:opacity-100 border border-border'}`}
                                         >
-                                            <Image src={img} alt={`${product.name} ${i}`} fill className="object-cover" />
+                                            <Image src={img} alt={`${product.name} selection ${i}`} fill className="object-cover" />
                                         </button>
                                     ))}
                                 </div>
                             )}
-                        </motion.div>
+                        </div>
 
-                        {/* Product Info */}
-                        <motion.div
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="show"
-                            className="flex flex-col"
-                        >
-                            <div className="space-y-6 pb-8 border-b border-white/5">
-                                <motion.div variants={itemVariants} className="space-y-3">
-                                    <p className="text-primary font-bold tracking-[0.3em] uppercase text-[10px]">{product.category}</p>
-                                    <h1 className="text-4xl md:text-6xl font-display leading-[1.1]">{product.name}</h1>
-                                </motion.div>
+                        {/* Order Configuration */}
+                        <div className="lg:col-span-5 flex flex-col pt-8">
+                            <div className="space-y-12 pb-16 border-b border-border">
+                                <div className="space-y-6">
+                                    <Badge variant="outline" className="border-primary/20 text-primary/60 py-1.5 px-6 rounded-full text-[10px] tracking-[0.6em] uppercase font-black">
+                                        {product.category}
+                                    </Badge>
+                                    <h1 className="text-6xl md:text-[5.5rem] font-serif font-black text-foreground leading-[0.85] tracking-tighter">
+                                        {product.name}.
+                                    </h1>
+                                </div>
 
-                                <motion.div variants={itemVariants} className="flex items-center gap-6">
-                                    <p className="text-3xl md:text-4xl font-display text-white font-medium">${product.price.toFixed(2)}</p>
-                                    <div className="h-8 w-[1px] bg-white/10" />
-                                    <div className="flex items-center gap-1.5 text-amber-500">
+                                <div className="flex items-center gap-10">
+                                    <p className="text-5xl font-serif font-black text-foreground tabular-nums">
+                                        <span className="text-xl font-light text-muted-foreground mr-2">$</span>
+                                        {product.price.toFixed(0)}
+                                    </p>
+                                    <div className="h-12 w-px bg-border" />
+                                    <div className="flex items-center gap-2">
                                         {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className="w-4 h-4 fill-current" />
+                                            <Star key={i} className="w-5 h-5 fill-primary text-primary" />
                                         ))}
-                                        <span className="text-xs text-stone-500 ml-2 font-medium">4.9 (48 Reviews)</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-6">
+                                            Aesthetic Benchmark
+                                        </span>
                                     </div>
-                                </motion.div>
+                                </div>
 
-                                <motion.p variants={itemVariants} className="text-stone-400 leading-relaxed text-lg max-w-xl">
+                                <p className="text-muted-foreground leading-[1.8] text-xl font-medium italic">
                                     {product.description}
-                                </motion.p>
+                                </p>
+
+                                <ul className="grid grid-cols-1 gap-5">
+                                    {product.features.map((feature, i) => (
+                                        <li key={i} className="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.3em] text-foreground/70 group">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-primary/20 transition-all duration-500 group-hover:bg-primary group-hover:scale-150" />
+                                            {feature}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
 
-                            {/* Selectors */}
-                            <div className="py-10 space-y-10">
-                                {/* Size Selector */}
-                                {product.sizes.length > 1 && (
-                                    <motion.div variants={itemVariants} className="space-y-5">
-                                        <div className="flex justify-between items-center">
-                                            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-300">Select Size</h4>
-                                            <button className="text-xs text-stone-500 hover:text-primary transition-colors">Size Guide</button>
+                            <div className="py-16 space-y-14">
+                                {/* Configuration */}
+                                <div className="grid grid-cols-2 gap-12">
+                                    <div className="space-y-6">
+                                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Volume Archive</h4>
+                                        <div className="flex items-center bg-black/5 rounded-[2rem] p-1.5 w-fit border border-black/5">
+                                            <button
+                                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                                className="w-14 h-14 flex items-center justify-center text-foreground hover:bg-black hover:text-white rounded-[1.5rem] transition-all duration-500"
+                                            >
+                                                <Minus className="w-5 h-5" />
+                                            </button>
+                                            <span className="w-14 text-center font-black text-lg text-foreground tabular-nums">{quantity}</span>
+                                            <button
+                                                onClick={() => setQuantity(quantity + 1)}
+                                                className="w-14 h-14 flex items-center justify-center text-foreground hover:bg-black hover:text-white rounded-[1.5rem] transition-all duration-500"
+                                            >
+                                                <Plus className="w-5 h-5" />
+                                            </button>
                                         </div>
-                                        <div className="flex flex-wrap gap-3">
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Aesthetic Tone</h4>
+                                        <div className="relative">
+                                            <select
+                                                className="w-full bg-black/5 border border-black/5 rounded-[2rem] h-16 px-8 appearance-none text-[11px] font-black uppercase tracking-[0.2em] outline-none focus:ring-8 focus:ring-primary/5 italic"
+                                                value={selectedColor}
+                                                onChange={(e) => setSelectedColor(e.target.value)}
+                                            >
+                                                <option value="">Spectral Choice</option>
+                                                {product.colors.map(c => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                            <ChevronDown className="absolute right-8 top-1/2 -translate-y-1/2 w-5 h-5 text-primary pointer-events-none" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Sizes */}
+                                {product.sizes.length > 1 && (
+                                    <div className="space-y-8">
+                                        <div className="flex justify-between items-center border-b border-border pb-4">
+                                            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Dimensional Index</h4>
+                                            <button className="text-[10px] font-black uppercase tracking-[0.3em] text-primary hover:tracking-[0.5em] transition-all duration-500">Guideline Vault</button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-4">
                                             {product.sizes.map((size) => (
                                                 <button
                                                     key={size}
                                                     onClick={() => setSelectedSize(size)}
-                                                    className={`w-14 h-14 rounded-2xl border-2 text-sm font-bold transition-all ${selectedSize === size ? 'bg-white border-white text-stone-950 shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'border-white/10 text-stone-500 hover:border-white/30 hover:text-white'}`}
+                                                    className={`w-18 h-18 rounded-[1.5rem] border-2 transition-all duration-500 font-black text-[11px] uppercase tracking-tighter ${selectedSize === size
+                                                        ? 'bg-black border-black text-white shadow-[0_25px_50px_rgba(0,0,0,0.2)] scale-110'
+                                                        : 'border-border text-muted-foreground hover:border-black hover:text-foreground'}`}
                                                 >
                                                     {size}
                                                 </button>
                                             ))}
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 )}
 
-                                {/* Color Selector */}
-                                <motion.div variants={itemVariants} className="space-y-5">
-                                    <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-300">Select Color</h4>
-                                    <div className="flex flex-wrap gap-4">
-                                        {product.colors.map((color) => (
-                                            <button
-                                                key={color}
-                                                onClick={() => setSelectedColor(color)}
-                                                className={`group flex items-center gap-3 px-5 py-3 rounded-2xl border-2 transition-all ${selectedColor === color ? 'border-primary bg-primary/5 text-white' : 'border-white/10 text-stone-500 hover:border-white/30'}`}
-                                            >
-                                                <div className={`w-3 h-3 rounded-full ${color.toLowerCase().includes('white') ? 'bg-white shadow-inner border border-white/20' : 'bg-stone-700'}`} />
-                                                <span className="text-sm font-medium">{color}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </motion.div>
-
-                                {/* Quantity and Actions */}
-                                <motion.div variants={itemVariants} className="space-y-8 pt-4">
-                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                                        <div className="flex items-center bg-stone-900/50 border border-white/10 rounded-2xl px-2 py-2">
-                                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 flex items-center justify-center text-stone-400 hover:text-white transition-colors">-</button>
-                                            <span className="w-10 text-center font-bold text-lg">{quantity}</span>
-                                            <button onClick={() => setQuantity(quantity + 1)} className="w-12 h-12 flex items-center justify-center text-stone-400 hover:text-white transition-colors">+</button>
-                                        </div>
-
-                                        <button
-                                            onClick={handleAddToCart}
-                                            className="flex-grow btn-primary py-5 px-8 rounded-2xl font-bold text-lg shadow-xl shadow-primary/20"
-                                        >
-                                            Add to Bag — ${(product.price * quantity).toFixed(2)}
-                                        </button>
-
-                                        <button className="hidden sm:flex w-16 h-16 rounded-2xl border-2 border-white/10 items-center justify-center text-stone-400 hover:text-white hover:border-white/30 transition-all">
-                                            <Heart className="w-6 h-6" />
-                                        </button>
-                                    </div>
-
-                                    <div className="flex justify-center gap-8 text-stone-500 text-xs font-semibold tracking-widest uppercase">
-                                        <button className="flex items-center gap-2 hover:text-white transition-colors">
-                                            <Share2 className="w-4 h-4" /> Share
-                                        </button>
-                                        <button className="flex items-center gap-2 hover:text-white transition-colors">
-                                            <Heart className="w-4 h-4" /> Wishlist
-                                        </button>
-                                    </div>
-                                </motion.div>
+                                {/* Main Actions */}
+                                <div className="flex gap-6">
+                                    <Button
+                                        onClick={handleAddToCart}
+                                        variant="gold"
+                                        className="flex-grow h-24 rounded-[2rem] text-[11px] uppercase font-black tracking-[0.5em] transition-all duration-700 hover:scale-[1.02] hover:shadow-[0_45px_90px_rgba(197,160,89,0.3)]"
+                                    >
+                                        Acquire for Archive <ArrowRight className="w-5 h-5 ml-4" />
+                                    </Button>
+                                    <Button
+                                        onClick={toggleWishlist}
+                                        variant="outline"
+                                        className={`w-24 h-24 rounded-[2rem] flex items-center justify-center border-border transition-all duration-700 ${isProductInWishlist ? 'bg-primary text-black border-primary shadow-2xl shadow-primary/40' : 'hover:bg-black hover:text-white'}`}
+                                    >
+                                        <Heart className={`w-6 h-6 ${isProductInWishlist ? 'fill-current' : ''}`} />
+                                    </Button>
+                                </div>
                             </div>
 
-                            {/* Trust Indicators */}
-                            <motion.div variants={itemVariants} className="mt-auto grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-3xl bg-stone-900 flex items-center justify-center text-primary border border-white/5">
-                                        <Truck className="w-6 h-6" />
+                            {/* Trust Footnotes */}
+                            <div className="mt-auto grid grid-cols-2 gap-12 pt-12 border-t border-border">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-16 h-16 rounded-[1.5rem] bg-black/5 flex items-center justify-center text-primary border border-black/5">
+                                        <Truck className="w-7 h-7" />
                                     </div>
-                                    <div>
-                                        <h5 className="text-xs font-bold text-white tracking-wide uppercase">Free Shipping</h5>
-                                        <p className="text-[10px] text-stone-500">Over $200</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-3xl bg-stone-900 flex items-center justify-center text-primary border border-white/5">
-                                        <ShieldCheck className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h5 className="text-xs font-bold text-white tracking-wide uppercase">2 Year Warranty</h5>
-                                        <p className="text-[10px] text-stone-500">Quality Assured</p>
+                                    <div className="space-y-1">
+                                        <h5 className="text-[10px] font-black text-foreground tracking-[0.3em] uppercase leading-none">Global Dispatch</h5>
+                                        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-bold italic">Expedited Logistics</p>
                                     </div>
                                 </div>
-                            </motion.div>
-                        </motion.div>
+                                <div className="flex items-center gap-6">
+                                    <div className="w-16 h-16 rounded-[1.5rem] bg-black/5 flex items-center justify-center text-primary border border-black/5">
+                                        <ShieldCheck className="w-7 h-7" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h5 className="text-[10px] font-black text-foreground tracking-[0.3em] uppercase leading-none">Maison Vault</h5>
+                                        <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-bold italic">Secure Holdings</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Related Products */}
-                    <div className="space-y-12">
-                        <div className="text-center space-y-4">
-                            <h2 className="text-3xl md:text-4xl font-display">Something you might like</h2>
-                            <p className="text-stone-500">Hand-picked additions to complement your style.</p>
+                    {/* Related Curation */}
+                    <div className="pt-56">
+                        <div className="flex flex-col items-center text-center space-y-8 mb-24">
+                            <Badge variant="outline" className="border-primary/30 text-primary py-1.5 px-6 rounded-full text-[10px] tracking-[0.6em] uppercase font-black italic">The Narrative Continued</Badge>
+                            <h2 className="text-7xl font-serif font-black text-foreground tracking-tighter">Synchronous Objects.</h2>
                         </div>
-                        <div className="product-grid">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
                             {relatedProducts.map((p) => (
                                 <ProductCard key={p.id} {...p} />
                             ))}
@@ -325,4 +335,23 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
             <Footer />
         </div>
     );
+}
+
+function ChevronDown(props: any) {
+    return (
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d="m6 9 6 6 6-6" />
+        </svg>
+    )
 }

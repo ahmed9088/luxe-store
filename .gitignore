@@ -41,3 +41,11 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# Logs
+build_error.log
+build_log.txt
+build_msg.txt
+
+# Antigravity Brain
+.gemini/antigravity/brain/

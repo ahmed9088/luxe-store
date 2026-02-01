@@ -6,8 +6,9 @@ import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import Newsletter from '@/components/Newsletter';
 import BrandStory from '@/components/BrandStory';
-import { ArrowRight, Star, ShieldCheck, Truck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowRight, Star, ShieldCheck, Truck, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const FEATURED_PRODUCTS = [
   {
@@ -62,141 +63,113 @@ const FEATURED_PRODUCTS = [
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
 
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative h-[90vh] flex items-center overflow-hidden">
-          {/* Background Gradient & Pattern */}
-          <div className="absolute inset-0 -z-10">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.5 }}
-              className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(194,120,97,0.1),transparent_70%)]"
-            />
+        {/* Cinematic Hero Section */}
+        <section className="relative min-h-[110vh] flex items-center overflow-hidden bg-black text-white">
+          {/* Advanced Background Effects */}
+          <div className="absolute inset-0 z-0 opacity-40">
+            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(197,160,89,0.15),transparent_50%)]" />
+            <div className="absolute top-[10%] right-[10%] w-[50rem] h-[50rem] bg-primary/20 blur-[180px] rounded-full animate-pulse-slow" />
+            <div className="absolute -bottom-[20%] -left-[10%] w-[40rem] h-[40rem] bg-white/5 blur-[150px] rounded-full" />
           </div>
 
-          <div className="container-custom relative">
-            <div className="max-w-4xl space-y-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full backdrop-blur-md"
-              >
-                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                <span className="text-primary font-bold tracking-[0.2em] uppercase text-[10px]">
-                  Spring Collection 2026
-                </span>
-              </motion.div>
+          <div className="container-custom relative z-10 py-32">
+            <div className="max-w-6xl mx-auto text-center space-y-20">
+              <div className="flex flex-col items-center space-y-10">
+                <Badge variant="outline" className="border-primary/40 text-primary py-2 px-8 rounded-full text-[11px] tracking-[0.6em] uppercase font-black italic animate-in fade-in slide-in-from-bottom-6 duration-1000">
+                  Genesis Selection — 2026
+                </Badge>
+                <div className="space-y-6">
+                  <h1 className="text-8xl md:text-[13rem] font-serif font-black leading-[0.8] tracking-tighter animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+                    Quiet <br />
+                    <span className="text-primary italic font-light lowercase">Absolutism.</span>
+                  </h1>
+                </div>
+                <p className="text-white/50 text-xl md:text-3xl max-w-3xl mx-auto leading-relaxed font-medium italic animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-400">
+                  Transcending the ephemeral. We curate for the few who find silence in the profound and meaning in the essential.
+                </p>
+              </div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 1 }}
-                className="text-5xl md:text-8xl font-display font-bold leading-[0.9] tracking-tighter"
-              >
-                Curated Luxury for the <br />
-                <span className="text-gradient-primary italic">Modern Mind</span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="text-stone-400 text-lg md:text-xl max-w-xl leading-relaxed font-light"
-              >
-                Experience the perfect blend of minimalist design and premium craftsmanship. Hand-thrown, hand-stitched, handpicked.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="flex flex-wrap gap-4 pt-4"
-              >
-                <Link href="/products" className="btn-primary px-8 py-4 text-base group overflow-hidden relative">
-                  <span className="relative z-10 flex items-center gap-2">
-                    Shop Collection
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
+              <div className="flex flex-wrap justify-center gap-10 pt-10 animate-in fade-in slide-in-from-bottom-20 duration-1000 delay-600">
+                <Link href="/products">
+                  <Button variant="gold" className="h-24 px-20 text-[11px] uppercase font-black tracking-[0.5em] group shadow-[0_30px_60px_rgba(197,160,89,0.3)] hover:scale-105 transition-all duration-700">
+                    Enter the Archive
+                    <ArrowRight className="ml-4 w-6 h-6 transition-transform group-hover:translate-x-4" />
+                  </Button>
                 </Link>
-                <Link href="/products?category=featured" className="btn-secondary px-8 py-4 text-base backdrop-blur-md">
-                  Explore Featured
+                <Link href="/products?featured=true">
+                  <Button variant="outline" className="h-24 px-20 text-[11px] uppercase font-black tracking-[0.5em] border-white/10 hover:bg-white/5 bg-transparent rounded-full backdrop-blur-2xl transition-all duration-700">
+                    The Editorial
+                  </Button>
                 </Link>
-              </motion.div>
+              </div>
+
+              {/* Scroll Indicator */}
+              <div className="flex flex-col items-center pt-24 animate-in fade-in duration-1000 delay-1000">
+                <p className="text-[10px] font-black uppercase tracking-[0.8em] text-white/20 mb-8 rotate-180 [writing-mode:vertical-lr]">Scroll</p>
+                <div className="w-px h-32 bg-gradient-to-b from-primary via-primary/20 to-transparent" />
+              </div>
             </div>
           </div>
-
-          {/* Abstract geometric element */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, x: 100 }}
-            animate={{ opacity: 0.15, scale: 1, x: 0 }}
-            transition={{ duration: 2.5, ease: "easeOut" }}
-            className="hidden lg:block absolute right-[-10%] top-1/2 -translate-y-1/2 w-2/3 aspect-square border border-white/5 rounded-full"
-          />
         </section>
 
-        {/* Brand Story Section */}
-        <BrandStory />
+        {/* Narrative Interlude */}
+        <section className="bg-background relative">
+          <BrandStory />
+        </section>
 
-        {/* Featured Products Grid */}
-        <section className="py-24 md:py-32 container-custom relative">
-          <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 space-y-4 md:space-y-0 text-center md:text-left">
-            <div className="space-y-4">
-              <span className="text-stone-500 font-bold tracking-[0.3em] uppercase text-xs">Essential Selection</span>
-              <h2 className="text-4xl md:text-5xl font-display font-bold">Featured Pieces</h2>
+        {/* Curation Display */}
+        <section className="py-56 container-custom relative">
+          <div className="absolute -top-40 left-0 w-full text-center pointer-events-none -z-10 overflow-hidden">
+            <span className="text-[30rem] font-serif font-black text-white/[0.02] leading-none select-none tracking-tighter italic">
+              Legacy
+            </span>
+          </div>
+
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-32 gap-16">
+            <div className="space-y-8 max-w-2xl">
+              <Badge variant="outline" className="border-primary/20 text-primary py-1 px-4 rounded-full text-[9px] tracking-[0.4em] uppercase font-black italic">Signature Array — Repository Index</Badge>
+              <h2 className="text-7xl md:text-9xl font-serif font-black text-foreground tracking-tighter leading-[0.85]">Material <br /><span className="text-primary italic font-light lowercase">Grammar.</span></h2>
+              <p className="text-muted-foreground text-2xl font-medium max-w-lg italic">Objects that speak an ancestral language of form, void, and function.</p>
             </div>
-            <Link href="/products" className="group flex items-center gap-2 text-primary font-bold tracking-widest uppercase text-xs">
-              View All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <Link href="/products" className="group">
+              <div className="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.5em] text-foreground hover:text-primary transition-all duration-500">
+                Witness Full Index <div className="w-14 h-14 rounded-full border border-border flex items-center justify-center group-hover:bg-primary group-hover:text-black group-hover:border-primary transition-all duration-700 group-hover:rotate-[360deg]"><ArrowRight className="w-5 h-5" /></div>
+              </div>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-            {FEATURED_PRODUCTS.map((product, i) => (
-              <motion.div
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
+            {FEATURED_PRODUCTS.map((product) => (
+              <ProductCard
                 key={product.id}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ delay: i * 0.1, duration: 0.8 }}
-              >
-                <ProductCard
-                  id={product.id}
-                  name={product.name}
-                  slug={product.slug}
-                  price={product.price}
-                  image={product.image}
-                  category={product.category}
-                  featured={product.featured}
-                  description={product.description}
-                  details={product.details}
-                  priority={product.priority}
-                />
-              </motion.div>
+                {...product}
+              />
             ))}
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-20 border-y border-white/5 bg-stone-900/10 backdrop-blur-sm">
-          <div className="container-custom">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+        {/* Values Archive */}
+        <section className="py-56 border-y border-white/5 bg-black text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(197,160,89,0.08),transparent_40%)]" />
+          <div className="container-custom relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-24">
               {[
-                { icon: Truck, label: 'Free Shipping', sub: 'Global delivery over $200' },
-                { icon: ShieldCheck, label: 'Secure Checkout', sub: 'Fully encrypted payments' },
-                { icon: Star, label: 'Quality Guarantee', sub: 'Hand-picked with care' },
-                { icon: ShieldCheck, label: '2 Year Warranty', sub: 'On all curated items' },
+                { icon: Truck, label: 'Global Dispatch', sub: 'Calculated logistics for an uncompromising global audience.' },
+                { icon: ShieldCheck, label: 'Vault Security', sub: 'End-to-end encryption and physical security for private holdings.' },
+                { icon: Star, label: 'Aesthetic Audit', sub: 'Every piece survives a rigorous testament of timeless intent.' },
+                { icon: Globe, label: 'Heritage Future', sub: 'A lifelong commitment to ethical and sustainable luxury.' },
               ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-14 h-14 rounded-full bg-stone-900 border border-white/10 flex items-center justify-center text-primary shadow-lg">
-                    <item.icon className="w-6 h-6" />
+                <div key={i} className="space-y-10 group">
+                  <div className="w-20 h-20 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center text-primary transition-all duration-1000 group-hover:bg-primary group-hover:text-black group-hover:rotate-[15deg] group-hover:shadow-[0_0_40px_rgba(197,160,89,0.3)]">
+                    <item.icon className="w-9 h-9 stroke-[1]" />
                   </div>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-bold tracking-wide uppercase">{item.label}</h4>
-                    <p className="text-xs text-stone-500">{item.sub}</p>
+                  <div className="space-y-6">
+                    <h4 className="text-[11px] font-black tracking-[0.4em] uppercase text-white border-l-2 border-primary/40 pl-6">{item.label}</h4>
+                    <p className="text-base text-white/40 leading-relaxed font-medium italic pr-6">{item.sub}</p>
                   </div>
                 </div>
               ))}
